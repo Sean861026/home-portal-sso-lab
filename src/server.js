@@ -20,6 +20,7 @@ const endpoints = {
 };
 const jwks = createRemoteJWKSet(new URL(endpoints.jwks));
 const app = express();
+const secureCookies = process.env.COOKIE_SECURE === 'true';
 
 app.set('trust proxy', 1);
 app.use(session({
@@ -30,7 +31,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: false,
+    secure: secureCookies,
     maxAge: 60 * 60 * 1000
   }
 }));
