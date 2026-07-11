@@ -1,0 +1,85 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/home-realm.json:/opt/keycloak/data/import/home-realm.json:ro
+      - keycloak_data:/opt/keycloak/data
+
+  keycloak-provision:
+    image: quay.io/keycloak/keycloak:26.3
+    entrypoint: ["/bin/bash", "/config/provision.sh"]
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak/provision:/config:ro
+    depends_on:
+      - keycloak
+    restart: "no"
+
+  portal:
+    build: .
+    environment:
+      PORT: "3000"
+      SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}
+      OIDC_CLIENT_ID: home-portal
+      OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
+      OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
+      OIDC_REDIRECT_URI: http://localhost:3000/callback
+    ports:
+      - "3000:3000"
+    depends_on:
+      - keycloak
+      - keycloak-provision
+
+  notes:
+    build: .
+    command: node src/family-app.js
+    environment:
+      PORT: "3001"
+      APP_KIND: notes
+      SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}-notes
+      OIDC_CLIENT_ID: family-notes
+      OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
+      OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
+      OIDC_REDIRECT_URI: http://localhost:3001/callback
+      DATA_FILE: /data/notes.json
+    ports:
+      - "3001:3001"
+    volumes:
+      - notes_data:/data
+    depends_on:
+      - keycloak
+      - keycloak-provision
+
+  calendar:
+    build: .
+    command: node src/family-app.js
+    environment:
+      PORT: "3002"
+      APP_KIND: calendar
+      SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}-calendar
+      OIDC_CLIENT_ID: family-calendar
+      OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
+      OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
+      OIDC_REDIRECT_URI: http://localhost:3002/callback
+      DATA_FILE: /data/events.json
+    ports:
+      - "3002:3002"
+    volumes:
+      - calendar_data:/data
+    depends_on:
+      - keycloak
+      - keycloak-provision
+
+volumes:
+  keycloak_data:
+  notes_data:
+  calendar_data:
