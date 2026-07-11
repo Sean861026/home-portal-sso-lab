@@ -14,6 +14,7 @@ const redirectUri = process.env.OIDC_REDIRECT_URI || `http://localhost:${port}/c
 const dataFile = process.env.DATA_FILE || `./data/${kind}.json`;
 const label = kind === 'calendar' ? 'Family Calendar' : 'Family Notes';
 const icon = kind === 'calendar' ? '📅' : '📝';
+const secureCookies = process.env.COOKIE_SECURE === 'true';
 const jwks = createRemoteJWKSet(new URL(`${internalBase}/protocol/openid-connect/certs`));
 const app = express();
 
@@ -23,7 +24,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || `local-${kind}-secret`,
   resave: false,
   saveUninitialized: false,
-  cookie: { httpOnly: true, sameSite: 'lax', secure: false, maxAge: 60 * 60 * 1000 }
+  cookie: { httpOnly: true, sameSite: 'lax', secure: secureCookies, maxAge: 60 * 60 * 1000 }
 }));
 
 const esc = (value = '') => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
