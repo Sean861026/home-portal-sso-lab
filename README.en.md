@@ -8,6 +8,12 @@ A hands-on OIDC/SSO lab. Keycloak acts as the Identity Provider, while the Node.
 
 Docker Desktop is required. The first run downloads the container images and builds the applications:
 
+Copy the environment template and replace its defaults first:
+
+```bash
+cp .env.example .env
+```
+
 ```bash
 docker compose up --build
 ```
@@ -72,3 +78,5 @@ docker compose up --build
 ## Before exposing it to the internet
 
 At minimum, replace every password and `SESSION_SECRET`, enable HTTPS, set cookies to `secure`, restrict redirect URIs, use a persistent session store, and enforce access controls at the tunnel or reverse-proxy layer. Never expose Keycloak development mode directly to the internet.
+
+When `COOKIE_SECURE=true`, browsers send session cookies over HTTPS only. See [SECURITY.md](SECURITY.md) for the complete checklist.
