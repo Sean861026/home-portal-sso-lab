@@ -11,6 +11,8 @@ const config = {
   internalBase: process.env.OIDC_INTERNAL_BASE || 'http://localhost:8080/realms/home',
   redirectUri: process.env.OIDC_REDIRECT_URI || 'http://localhost:3000/callback'
 };
+const publicHost = process.env.PUBLIC_HOST || 'localhost';
+const publicBase = `http://${publicHost}`;
 
 const endpoints = {
   authorization: `${config.publicIssuer}/protocol/openid-connect/auth`,
@@ -131,7 +133,7 @@ app.get('/', (req, res) => {
   }
 
   const roles = user.realm_access?.roles || [];
-  res.send(page('Dashboard', `<section class="hero"><p class="muted">AUTHENTICATED</p><h1>歡迎，${escapeHtml(user.name || user.preferred_username)}</h1><p class="muted">你已透過 Keycloak 完成 SSO 登入。</p></section><div class="grid"><a class="card" href="http://localhost:3001"><h2>📝 Family Notes</h2><p class="muted">家庭記事與共同清單 →</p></a><a class="card" href="http://localhost:3002"><h2>📅 Family Calendar</h2><p class="muted">共享家庭行程 →</p></a><div class="card"><h2>Identity</h2><p><strong>Username</strong><br>${escapeHtml(user.preferred_username)}</p><p><strong>Email</strong><br>${escapeHtml(user.email)}</p></div><div class="card"><h2>Realm roles</h2><div>${roles.map(role => `<span class="tag">${escapeHtml(role)}</span>`).join('')}</div></div></div><h2 style="margin-top:35px">ID Token claims</h2><pre>${escapeHtml(JSON.stringify(user, null, 2))}</pre>`, user));
+  res.send(page('Dashboard', `<section class="hero"><p class="muted">AUTHENTICATED</p><h1>歡迎，${escapeHtml(user.name || user.preferred_username)}</h1><p class="muted">你已透過 Keycloak 完成 SSO 登入。</p></section><div class="grid"><a class="card" href="${publicBase}:3001"><h2>📝 Family Notes</h2><p class="muted">家庭記事與共同清單 →</p></a><a class="card" href="${publicBase}:3002"><h2>📅 Family Calendar</h2><p class="muted">共享家庭行程 →</p></a><div class="card"><h2>Identity</h2><p><strong>Username</strong><br>${escapeHtml(user.preferred_username)}</p><p><strong>Email</strong><br>${escapeHtml(user.email)}</p></div><div class="card"><h2>Realm roles</h2><div>${roles.map(role => `<span class="tag">${escapeHtml(role)}</span>`).join('')}</div></div></div><h2 style="margin-top:35px">ID Token claims</h2><pre>${escapeHtml(JSON.stringify(user, null, 2))}</pre>`, user));
 });
 
 app.get('/admin', requireLogin, (req, res) => {
@@ -148,7 +150,7 @@ app.get('/logout', (req, res) => {
     const url = new URL(endpoints.logout);
     url.search = new URLSearchParams({
       client_id: config.clientId,
-      post_logout_redirect_uri: 'http://localhost:3000/',
+      post_logout_redirect_uri: `${publicBase}:3000/`,
       ...(idToken ? { id_token_hint: idToken } : {})
     });
     res.redirect(url.toString());
