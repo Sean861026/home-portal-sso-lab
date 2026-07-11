@@ -52,6 +52,23 @@ Keycloak 管理介面的本機帳密是 `admin` / `admin`。
 
 Family Notes 與 Calendar 的資料分別存於 Docker named volume。一般使用者能新增內容及刪除自己的內容；`admin` 能刪除任何人的內容。
 
+## 透過 Tailscale 從外部連線
+
+在家用主機與外部裝置安裝 Tailscale，並以同一個 Tailnet 登入。將 `.env` 的 `PUBLIC_HOST` 設為家用主機的 MagicDNS hostname：
+
+```env
+PUBLIC_HOST=laptop-r8l39tjm
+COOKIE_SECURE=false
+```
+
+正常重建，不要刪除 volumes：
+
+```bash
+docker compose up --build
+```
+
+`keycloak-provision` 會自動將精確的 localhost 與 Tailscale redirect URIs 寫入現有 clients。外部裝置連上 Tailscale 後，開啟 `http://laptop-r8l39tjm:3000`。這些服務只應透過受信任的 Tailnet 存取；HTTP 模式不適合公開網際網路。
+
 ## 新增服務且不刪資料
 
 `keycloak-provision` 會在每次 Compose 啟動時檢查 `keycloak/provision/clients/*.json`，只建立尚未存在的 OIDC client。它不會刪除或覆寫現有 client，也不會動到 Notes、Calendar 或 Keycloak volume。
