@@ -4,7 +4,7 @@ services:
     command: start-dev --import-realm
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
       KC_HEALTH_ENABLED: "true"
     ports:
       - "8080:8080"
@@ -17,7 +17,7 @@ services:
     entrypoint: ["/bin/bash", "/config/provision.sh"]
     environment:
       KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
     volumes:
       - ./keycloak/provision:/config:ro
     depends_on:
@@ -29,6 +29,7 @@ services:
     environment:
       PORT: "3000"
       SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
       OIDC_CLIENT_ID: home-portal
       OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
       OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
@@ -46,6 +47,7 @@ services:
       PORT: "3001"
       APP_KIND: notes
       SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}-notes
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
       OIDC_CLIENT_ID: family-notes
       OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
       OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
@@ -66,6 +68,7 @@ services:
       PORT: "3002"
       APP_KIND: calendar
       SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}-calendar
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
       OIDC_CLIENT_ID: family-calendar
       OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
       OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
