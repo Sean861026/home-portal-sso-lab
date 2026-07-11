@@ -1,0 +1,16 @@
+{
+  "name": "home-portal-sso-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A small OIDC/SSO lab using Node.js and Keycloak",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "check": "node --check src/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "jose": "^6.0.12"
+  }
+}
