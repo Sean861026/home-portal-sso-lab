@@ -1,5 +1,7 @@
 # Home Portal SSO Lab
 
+[繁體中文](README.md) | [English](README.en.md)
+
 一個可以實際操作的 OIDC/SSO 練習環境。Keycloak 是身分提供者（Identity Provider），Node.js Portal 是依賴方（Relying Party）。
 
 ## 啟動
@@ -23,6 +25,7 @@ docker compose up --build
 |---|---|---|---|
 | `alice` | `alice123` | `family` | 可登入 Dashboard，不能進 Admin |
 | `owner` | `owner123` | `family`, `admin` | 可登入 Dashboard 與 Admin |
+| `sean` | `sean123` | `family`, `admin` | 可使用所有 Lab 功能 |
 
 Keycloak 管理介面的本機帳密是 `admin` / `admin`。
 
