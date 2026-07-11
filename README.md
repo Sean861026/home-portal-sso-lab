@@ -8,6 +8,12 @@
 
 需要 Docker Desktop。第一次啟動會下載 image 並建置 Portal：
 
+建議先複製環境設定並更換預設值：
+
+```bash
+cp .env.example .env
+```
+
 ```bash
 docker compose up --build
 ```
@@ -72,3 +78,5 @@ docker compose up --build
 ## 接到外網之前
 
 正式對外時至少要更換所有密碼與 `SESSION_SECRET`、使用 HTTPS、把 cookie 設為 `secure`、限制 redirect URI、使用持久化 session store，並在 Tunnel/反向代理層限制來源。不要直接把 Keycloak 的開發模式暴露到公網。
+
+設定 `COOKIE_SECURE=true` 後，瀏覽器只會透過 HTTPS 傳送 session cookie。完整清單請參考 [SECURITY.md](SECURITY.md)。
