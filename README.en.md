@@ -52,6 +52,23 @@ Sign in to the Portal, then open Family Notes or Family Calendar from the Dashbo
 
 Family Notes and Family Calendar store their data in separate Docker named volumes. Regular users can add content and delete their own entries; an `admin` can delete any entry.
 
+## Connect remotely through Tailscale
+
+Install Tailscale on the home server and remote devices, then sign them into the same Tailnet. Set `PUBLIC_HOST` in `.env` to the home server's MagicDNS hostname:
+
+```env
+PUBLIC_HOST=laptop-r8l39tjm
+COOKIE_SECURE=false
+```
+
+Rebuild normally without deleting volumes:
+
+```bash
+docker compose up --build
+```
+
+`keycloak-provision` automatically adds exact localhost and Tailscale redirect URIs to the existing clients. After connecting the remote device to Tailscale, open `http://laptop-r8l39tjm:3000`. Access these HTTP services only through a trusted Tailnet; this mode is not suitable for the public internet.
+
 ## Add a service without deleting data
 
 On every Compose start, `keycloak-provision` checks `keycloak/provision/clients/*.json` and creates only the missing OIDC clients. It does not delete or overwrite existing clients and does not modify the Notes, Calendar, or Keycloak volumes.
