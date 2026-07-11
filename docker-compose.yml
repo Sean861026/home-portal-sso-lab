@@ -18,6 +18,7 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}
     volumes:
       - ./keycloak/provision:/config:ro
     depends_on:
@@ -31,9 +32,10 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       OIDC_CLIENT_ID: home-portal
-      OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
+      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}
+      OIDC_PUBLIC_ISSUER: http://${PUBLIC_HOST:-localhost}:8080/realms/home
       OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
-      OIDC_REDIRECT_URI: http://localhost:3000/callback
+      OIDC_REDIRECT_URI: http://${PUBLIC_HOST:-localhost}:3000/callback
     ports:
       - "3000:3000"
     depends_on:
@@ -49,9 +51,10 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}-notes
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       OIDC_CLIENT_ID: family-notes
-      OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
+      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}
+      OIDC_PUBLIC_ISSUER: http://${PUBLIC_HOST:-localhost}:8080/realms/home
       OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
-      OIDC_REDIRECT_URI: http://localhost:3001/callback
+      OIDC_REDIRECT_URI: http://${PUBLIC_HOST:-localhost}:3001/callback
       DATA_FILE: /data/notes.json
     ports:
       - "3001:3001"
@@ -70,9 +73,10 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:-local-lab-change-me}-calendar
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       OIDC_CLIENT_ID: family-calendar
-      OIDC_PUBLIC_ISSUER: http://localhost:8080/realms/home
+      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}
+      OIDC_PUBLIC_ISSUER: http://${PUBLIC_HOST:-localhost}:8080/realms/home
       OIDC_INTERNAL_BASE: http://keycloak:8080/realms/home
-      OIDC_REDIRECT_URI: http://localhost:3002/callback
+      OIDC_REDIRECT_URI: http://${PUBLIC_HOST:-localhost}:3002/callback
       DATA_FILE: /data/events.json
     ports:
       - "3002:3002"
