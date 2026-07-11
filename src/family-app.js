@@ -14,6 +14,7 @@ const redirectUri = process.env.OIDC_REDIRECT_URI || `http://localhost:${port}/c
 const dataFile = process.env.DATA_FILE || `./data/${kind}.json`;
 const label = kind === 'calendar' ? 'Family Calendar' : 'Family Notes';
 const icon = kind === 'calendar' ? '📅' : '📝';
+const publicHost = process.env.PUBLIC_HOST || 'localhost';
 const secureCookies = process.env.COOKIE_SECURE === 'true';
 const jwks = createRemoteJWKSet(new URL(`${internalBase}/protocol/openid-connect/certs`));
 const app = express();
@@ -48,7 +49,7 @@ function csrf(req) {
 }
 
 function layout(title, body, user) {
-  const nav = user ? `<span>${esc(user.preferred_username)}</span><a href="http://localhost:3000">Portal</a><a href="/leave">離開此 App</a>` : '<a class="button" href="/login">使用 SSO 登入</a>';
+  const nav = user ? `<span>${esc(user.preferred_username)}</span><a href="http://${publicHost}:3000">Portal</a><a href="/leave">離開此 App</a>` : '<a class="button" href="/login">使用 SSO 登入</a>';
   return `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} · ${label}</title><style>
 *{box-sizing:border-box}:root{font-family:Inter,system-ui;background:#f6f2ea;color:#292824}body{margin:0}.wrap{max-width:920px;margin:auto;padding:24px}nav{display:flex;align-items:center;justify-content:flex-end;gap:18px}nav span{margin-right:auto;color:#716d64}a{color:#335d7a;text-decoration:none}.hero{padding:55px 0 25px}h1{font-size:clamp(2.5rem,7vw,5rem);margin:.1em 0}.muted{color:#777167}.button,button{border:0;border-radius:9px;background:#315d79;color:white;padding:10px 15px;font-weight:700;cursor:pointer}.form,.item{background:white;border:1px solid #ddd4c6;border-radius:14px;padding:18px;margin:14px 0;box-shadow:0 4px 18px #342b1c0a}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}input,textarea{width:100%;border:1px solid #cfc6b8;border-radius:8px;padding:11px;font:inherit;margin:5px 0 12px}textarea{min-height:90px}.meta{font-size:.85rem;color:#888074}.item h2{margin:.2em 0}.danger{background:#a74343;float:right}.empty{text-align:center;padding:50px;color:#888074}@media(max-width:600px){.row{grid-template-columns:1fr}}
 </style></head><body><div class="wrap"><nav>${nav}</nav>${body}</div></body></html>`;
